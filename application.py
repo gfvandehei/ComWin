@@ -1,18 +1,37 @@
 from tkinter import *
 import socket
+import threading
 
 class WinComGUI(Frame):
+    def recieve_data(self):
+        while True:
+            data=self.ClientSocket.recv(1024)
+            if not data: 
+                sys.exit(0)
+            self.output_message=data.decode("utf-8")#self.output.insert(INSERT,data.decode("utf-8")+"/n")
+
     def connect_command(self):
         #connects socket to server
         address=self.ip_entry.get()
-        port=self.port_entry.get()
+        port=int(self.port_entry.get())
         self.output.insert(INSERT, "attempting to connect to {}:{} \n".format(address,port))
+        try:
+            self.ClientSocket.connect((address,port))
+            self.c,self.addr=self.ServerSocket.accept()
+            self.RecvThread.start()
+            self.output.insert(INSERT, "Connection Sucessful")
+        except:
+            self.output.insert(INSERT, "could not connect to {}:{}, please try again \n".format(address,port))
 
     def send_command(self):
         '''
         this works sort of, it wont print until the program is closed
         '''
-        print("send")#placeholder
+        userinput=self.send_entry.get()
+        if(self.c==0):
+            self.output.insert(INSERT, "you are not yet connected \n")
+        else:
+            self.c.send(bytes(userinput,"utf-8"))
         
     def createWidgets(self):
         self.connect_button=Button( text="Connect", bg="red", command=self.connect_command)
@@ -33,6 +52,17 @@ class WinComGUI(Frame):
             
 
     def __init__(self,master=None):
+        self.output_message=""
         Frame.__init__(self, master)
+        host=socket.gethostbyname(socket.gethostname())
+        print(host)#used for debugging
+        port=12345
+        self.c,self.addr=0,0
         self.createWidgets()
-        ClientSocket=socket.socket()
+        self.ClientSocket=socket.socket()
+
+        self.ServerSocket=socket.socket()
+        self.ServerSocket.bind((host,port))
+        self.ServerSocket.listen(5)
+        self.RecvThread=threading.Thread(target=self.recieve_data)
+
