@@ -1,11 +1,12 @@
 from tkinter import *
+import socket
 
 class WinComGUI(Frame):
     def connect_command(self):
-        '''
-        need a connect function
-        '''
-        print("conect")#placeholder
+        #connects socket to server
+        address=self.ip_entry.get()
+        port=self.port_entry.get()
+        self.output.insert(INSERT, "attempting to connect to {}:{} \n".format(address,port))
 
     def send_command(self):
         '''
@@ -14,16 +15,24 @@ class WinComGUI(Frame):
         print("send")#placeholder
         
     def createWidgets(self):
-        connect_Button=Button(self.master, text="Connect", bg="red", command=self.connect_command).grid(row=0, sticky=W)
-        send_button=Button(self.master, text="Send     ",bg="green", command=self.send_command).grid(row=1, sticky=W)
+        self.connect_button=Button( text="Connect", bg="red", command=self.connect_command)
+        self.connect_button.grid(row=0, sticky=W)
+        self.send_button=Button( text="Send     ",bg="green", command=self.send_command)
+        self.send_button.grid(row=1, sticky=W)
 
-        connect_entry=Entry(self.master).grid(row=0, column=0,sticky=W, padx=80)
-        send_entry=Entry(self.master).grid(row=1, column=0,sticky=W, padx=80)
+        self.ip_entry=Entry()
+        self.ip_entry.grid(row=0, column=0,sticky=W, padx=80)
+        self.port_entry=Entry()
+        self.port_entry.grid(row=0,column=0,sticky=E,padx=150)
+        self.send_entry=Entry()
+        self.send_entry.grid(row=1, column=0,sticky=W, padx=80)
 
-        Text(self.master).grid(row=2)
+        self.output=Text()
+        self.output.grid(row=2)
         
             
 
     def __init__(self,master=None):
         Frame.__init__(self, master)
         self.createWidgets()
+        ClientSocket=socket.socket()
