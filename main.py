@@ -18,7 +18,7 @@ if __name__=="__main__":
     mainapp=WinComGUI(master=root)
     #mainapp.mainloop()
     while(True):
-        mainapp.read_window.insert(INSERT, recsock.recv(1024))
         mainapp.update_idletasks()
         mainapp.update()
+        mainapp.read_window.insert(INSERT, recsock.recv(1024))
     root.destroy()
