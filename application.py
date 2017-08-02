@@ -11,7 +11,8 @@ class WinComGUI(Frame):
     '''
     def recieve_data(self):
         '''
-        
+        this function is designed to be run in a thread alongside the main loop
+        -gets sent message from server prints and prints it to GUI
         '''
         while True:
             data=self.ClientSocket.recv(1024)
@@ -20,20 +21,24 @@ class WinComGUI(Frame):
             self.output_message=data.decode("utf-8")#self.output.insert(INSERT,data.decode("utf-8")+"/n")
 
     def connect_command(self):
-        #connects socket to server
+        '''
+        this function is in charge of connecting to the server
+        socket of another computer also starts thread to recieve server message
+        if sucessfully connected
+        '''
         address=self.ip_entry.get()
         port=int(self.port_entry.get())
         self.output.insert(INSERT, "attempting to connect to {}:{} \n".format(address,port))
         try:
             self.ClientSocket.connect((address,port))
             self.RecvThread.start()
-            self.output.insert(INSERT, "Connection Sucessful")
+            self.output.insert(INSERT, "Connection Sucessful \n")
         except:
             self.output.insert(INSERT, "could not connect to {}:{}, please try again \n".format(address,port))
 
     def send_command(self):
         '''
-        this works sort of, it wont print until the program is closed
+        This sends a message to a connected client
         '''
         userinput=self.send_entry.get()
         if(self.c==0):
@@ -42,12 +47,18 @@ class WinComGUI(Frame):
             self.c.send(bytes(userinput,"utf-8"))
     
     def exit(self):
-        
+        '''
+        takes care of safely exiting the program when exit button is pressed
+        clicking x button may still not fully exit
+        '''        
         self.ClientSocket.close()
         self.ServerSocket.close()        
         os._exit(0)        
         
     def createWidgets(self):
+        '''
+        populates the GUI
+        '''
         self.connect_button=Button( text="Connect", bg="red", command=self.connect_command)
         self.connect_button.grid(row=0, sticky=W)
         self.send_button=Button( text="Send     ",bg="green", command=self.send_command)
@@ -66,14 +77,19 @@ class WinComGUI(Frame):
         self.output.grid(row=2)
         
     def pair(self):
+        '''
+        allows the server to take clients while still running other
+        function, is made to be run in a thread
+        '''
         while(True):
             self.c,self.addr=self.ServerSocket.accept()
             if(self.c!=0):
-                print("paired successfully with {}".format(self.addr))
+                self.connect_var=1
                 break
 
     def __init__(self,master=None):
         self.exitflag=0
+        self.connect_var=0
         self.master=master
         self.output_message=""
         Frame.__init__(self, master)
