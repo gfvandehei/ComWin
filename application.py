@@ -71,10 +71,10 @@ class WinComGUI(Frame):
         port=12345
         self.c,self.addr=0,0
         self.createWidgets()
-        self.ClientSocket=socket.socket()
+        self.ClientSocket=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-        self.ServerSocket=socket.socket()
-        self.ServerSocket.bind((host,port))
+        self.ServerSocket=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.ServerSocket.bind((host,12345))
         self.ServerSocket.listen(5)
         self.RecvThread=threading.Thread(target=self.recieve_data)
 
