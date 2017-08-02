@@ -5,7 +5,14 @@ import sys
 import os
 
 class WinComGUI(Frame):
+    '''
+    responsible for holding the components of the GUI and the functions related
+    to it
+    '''
     def recieve_data(self):
+        '''
+        
+        '''
         while True:
             data=self.ClientSocket.recv(1024)
             if not data: 
