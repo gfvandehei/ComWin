@@ -66,7 +66,7 @@ class WinComGUI(Frame):
         self.master=master
         self.output_message=""
         Frame.__init__(self, master)
-        host=socket.gethostbyname(socket.gethostname())
+        host=socket.gethostname()#socket.gethostbyname(socket.gethostname())
         print(host)#used for debugging
         port=12345
         self.c,self.addr=0,0
