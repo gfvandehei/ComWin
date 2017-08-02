@@ -19,7 +19,6 @@ class WinComGUI(Frame):
         self.output.insert(INSERT, "attempting to connect to {}:{} \n".format(address,port))
         try:
             self.ClientSocket.connect((address,port))
-            self.c,self.addr=self.ServerSocket.accept()
             self.RecvThread.start()
             self.output.insert(INSERT, "Connection Sucessful")
         except:
@@ -59,7 +58,12 @@ class WinComGUI(Frame):
         self.output=Text()
         self.output.grid(row=2)
         
-            
+    def pair(self):
+        while(True):
+            self.c,self.addr=self.ServerSocket.accept()
+            if(self.c!=0):
+                print("paired successfully with {}".format(self.addr))
+                break
 
     def __init__(self,master=None):
         self.exitflag=0
@@ -77,4 +81,5 @@ class WinComGUI(Frame):
         self.ServerSocket.bind((host,port))
         self.ServerSocket.listen(5)
         self.RecvThread=threading.Thread(target=self.recieve_data)
-
+        self.PairThread=threading.Thread(target=self.pair)
+        self.PairThread.start()
