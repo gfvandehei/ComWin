@@ -7,8 +7,9 @@ if __name__=="__main__":
     root=Tk()
     #try to connect
     recsock=socket.socket()
+    addr="192.168.1.181"
     try:
-        recsock.connect((socket.gethostname(),12345))
+        recsock.connect((addr,12345))
         print(recsock.recv(1024))
     except:
         print("could not connect")
