@@ -4,7 +4,6 @@ import socket
 
 if __name__=="__main__":
     root=Tk()    
-
     mainapp=WinComGUI(master=root)
 
     while(True):
